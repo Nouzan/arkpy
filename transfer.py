@@ -1,5 +1,6 @@
 import pyautogui as pai
 import time
+import sys
 pai.PAUSE = 0
 
 def Box2Player(paths, times=5, delay=0.5, isleft=True, isclose=True):
@@ -30,24 +31,31 @@ def Box2Player(paths, times=5, delay=0.5, isleft=True, isclose=True):
         count = count + 1
         time.sleep(delay)
     if isclose:
-        pai.press('esc')
+        pai.press('f')
     time.sleep(delay)
     print('Finished transfering.')
 
 
-def Round(times=7, anticlock=True, delay=0.1):
+def Round(anticlock=True, delay=0.6, rate=0.95):
     if anticlock:
         key = 'left'
+        k = rate
     else:
+        k = 1.0
         key = 'right'
-    for i in range(0, times):
-        pai.keyDown(key)
-        time.sleep(delay)
-        pai.keyUp(key)
+    pai.keyDown(key)
+    time.sleep(k*delay)
+    pai.keyUp(key)
     print('Finished rounding.')
 
 
-
+RoundDelay = 0.6
+rate = 0.95
+if len(sys.argv) == 2:
+    RoundDelay = float(sys.argv[1])
+elif len(sys.argv) == 3:
+    RoundDelay = float(sys.argv[1])
+    rate = float(sys.argv[2])
 
 paths = []
 for i in range(1, 9):
@@ -56,8 +64,8 @@ while True:
     time.sleep(1)
     Box2Player(paths, times=2)
     time.sleep(1)
-    Round(anticlock=True)
+    Round(anticlock=True, delay=RoundDelay, rate=rate)
     time.sleep(1)
     Box2Player(paths, times=-1, isleft=False)
     time.sleep(1)
-    Round(anticlock=False)
+    Round(anticlock=False, delay=RoundDelay, rate=rate)
