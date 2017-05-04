@@ -77,7 +77,7 @@ while True:
         else:
             useThing(keyHungry)
         time.sleep(1)
-        print(str(time.asctime(time.localtime(time.asctime(time.localtime(time.time()))))) + ':', end=' ')
+        print(str(time.asctime(time.localtime(time.time()))) + ':', end=' ')
         print('Hungry')
         
     flag = isStatus(drys)
