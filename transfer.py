@@ -6,12 +6,33 @@ pai.PAUSE = 0
 
 def isBox(paths):
     flag = False
+    time.sleep(1)
     for path in paths:
         pos = pai.locateOnScreen(path)
         if pos is not None:
             flag = True
             break;
+        time.sleep(0.5)
     return flag
+
+
+def FindChair(chairs, delay=0.1, uddelay=0.4):
+    pai.keyDown('down')
+    time.sleep(uddelay)
+    pai.keyUp('down')
+    while True:
+        pai.keyUp('e')
+        pai.keyDown('left')
+        time.sleep(delay)
+        pai.keyUp('left')
+        pai.keyDown('e')
+        time.sleep(0.7)
+        if isBox(chairs):
+            break;
+    pai.keyUp('e')
+    time.sleep(1)
+    pai.press('e')    
+    
 
 def Box2Player(paths, boxpaths, times=5, delay=0.5, isleft=True, isclose=True):
     if isleft:
@@ -63,8 +84,9 @@ def Round(anticlock=True, delay=0.6, rate=0.95):
     print('Finished rounding.')
 
 
-RoundDelay = 0.6
-rate = 1
+LRDelay = 0.6
+UDDelay = 0.38 
+rate = 0.95
 if len(sys.argv) == 2:
     RoundDelay = float(sys.argv[1])
 elif len(sys.argv) == 3:
@@ -80,17 +102,55 @@ for i in range(1, 3):
 dinopaths = []
 for i in range(1, 3):
     dinopaths.append('boxs/dino/' + str(i) + '.png')
+chairs = []
+for i in range(1, 2):
+    chairs.append('chairs/' + str(i) + '.png')
 
+
+time.sleep(1)
+pai.keyDown('down')
+time.sleep(UDDelay)
+pai.keyUp('down')
 while True:
     time.sleep(1)
-    if not Box2Player(paths, boxpaths, times=2):
-        print('需要校正：未能打开冰箱。')
-        break;
-    time.sleep(1)
-    Round(anticlock=True, delay=RoundDelay, rate=rate)
-    time.sleep(1)
-    if not Box2Player(paths, dinopaths, times=-1, isleft=False):
+    while not Box2Player(paths, dinopaths, times=-1, isleft=False):
         print('需要校正：未能打开龙背包')
-        break;
-    time.sleep(1.5)
-    Round(anticlock=False, delay=RoundDelay, rate=rate)
+        while isBox(boxpaths):
+            print('在背包')
+            pai.press('f')
+            time.sleep(1.5)
+        
+        pai.press('x')
+        FindChair(chairs, delay=0.5, uddelay=0.5-UDDelay)
+        time.sleep(2)
+        pai.press('e')
+        time.sleep(2)
+        pai.press('x')
+        # break;
+        pai.keyDown('down')
+        time.sleep(UDDelay)
+        pai.keyUp('down')
+        time.sleep(1)
+    time.sleep(1)
+    Round(anticlock=False, delay=LRDelay, rate=rate)
+    time.sleep(1)
+    while not Box2Player(paths, boxpaths, times=2):
+        print('需要校正：未能打开冰箱。')
+        while isBox(boxpaths):
+            print('在背包')
+            pai.press('f')
+            time.sleep(1.5)
+        
+        pai.press('x')
+        FindChair(chairs, delay=0.5, uddelay=0.4-UDDelay)
+        time.sleep(2)
+        pai.press('e')
+        time.sleep(2)
+        pai.press('x')
+        # break;
+        pai.keyDown('down')
+        time.sleep(UDDelay)
+        pai.keyUp('down')
+        time.sleep(1)
+    time.sleep(1)
+    Round(anticlock=True, delay=LRDelay, rate=rate)
